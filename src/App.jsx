@@ -1,7 +1,7 @@
 import React from 'react'
-import { useConnection, useConnect, useDisconnect, useBalance, useChainId, useConnectors } from 'wagmi'
+import { useConnection, useConnect, useDisconnect, useBalance, useChainId, useConnectors , useSignTypedData} from 'wagmi'
 import { useSignEIP712, formatApproveAgentMessage, formatApproveBuilderMessage } from './sign.js'
-import { approveAgent, approveBuilder } from './api.js'
+import { approveAgent, approveBuilder, updateBuilder } from './api.js'
 
 function App() {
   const { address, isConnected } = useConnection()
@@ -30,6 +30,9 @@ function App() {
     return nowMs * 1_000_000 + iRef.current
   }
 
+
+  const {mutateAsync: signTypedDataAsync}  = useSignTypedData()
+
   const handleApproveAgent = async () => {
     if (!address) {
       alert('Please connect your wallet first')
@@ -50,7 +53,7 @@ function App() {
       canWithdraw: false,
       builder: '0xc2af13e1B1de3A015252A115309A0F9DEEDCFa0A',
       maxFeeRate: '0.00001',
-      builderName: 'ivan',
+      builderName: 'hong',
       asterChain: 'Testnet',
       user: address,
       nonce: nonce,
@@ -154,6 +157,62 @@ function App() {
     }
   }
 
+  const handleUpdateBuilder = async () => {
+    if (!address) {
+      alert('Please connect your wallet first')
+      return
+    }
+
+    // Generate nonce using the same logic as demo-code.md
+    const nonce = getNonce()
+
+    // Parameters matching demo-code.md (updateBuilder only needs builder and maxFeeRate)
+    const messageParams = {
+      builder: '0xc2af13e1B1de3A015252A115309A0F9DEEDCFa0A',
+      maxFeeRate: '0.00002',
+      asterChain: 'Testnet',
+      user: address,
+      nonce: nonce,
+    }
+
+    // Format message with capitalized keys (same as formatApproveBuilderMessage)
+    const formattedMessage = formatApproveBuilderMessage(messageParams)
+
+    try {
+      const signature = await signV3EIP712(formattedMessage, 'UpdateBuilder')
+      console.log('UpdateBuilder signature:', signature)
+      
+      // Prepare API call payload
+      const apiParams = {
+        ...messageParams,
+        signature: signature,
+        signatureChainId: chainId
+      }
+      
+      // Store the signed API params to display on screen
+      setSignedApiParams({
+        type: 'UpdateBuilder',
+        params: apiParams,
+      })
+      
+      setIsSubmitting(true)
+      try {
+        const response = await updateBuilder(apiParams)
+        console.log('UpdateBuilder API response:', response.data)
+        alert(`UpdateBuilder submitted successfully!\nSignature: ${signature}\nResponse: ${JSON.stringify(response.data)}`)
+      } catch (apiError) {
+        console.error('Error calling updateBuilder API:', apiError)
+        alert(`Error submitting to API: ${apiError.response?.data?.message || apiError.message || 'Unknown error'}`)
+        setIsSubmitting(false) // Reset on error
+      } finally {
+        setIsSubmitting(false)
+      }
+    } catch (error) {
+      console.error('Error signing UpdateBuilder:', error)
+      setIsSubmitting(false) // Reset submission state on signing error
+    }
+  }
+
   return (
     <div className="container">
       <h1>Aster Code Demo</h1>
@@ -174,16 +233,23 @@ function App() {
             <button 
               onClick={handleApproveAgent} 
               className="button"
-              disabled={isSigning}
+              disabled={isSigning || isSubmitting}
             >
               {isSigning ? 'Signing...' : 'Sign ApproveAgent'}
             </button>
             <button 
               onClick={handleApproveBuilder} 
               className="button"
-              disabled={isSigning}
+              disabled={isSigning || isSubmitting}
             >
               {isSigning ? 'Signing...' : 'Sign ApproveBuilder'}
+            </button>
+            <button 
+              onClick={handleUpdateBuilder} 
+              className="button"
+              disabled={isSigning || isSubmitting}
+            >
+              {isSigning ? 'Signing...' : isSubmitting ? 'Submitting...' : 'Update Builder'}
             </button>
           </div>
 
