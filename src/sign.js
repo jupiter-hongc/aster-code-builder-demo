@@ -14,7 +14,7 @@ const eip712Template = {
   domain: {
     name: "AsterSignTransaction",
     version: "1",
-    chainId: 714,
+    chainId: 56,
     verifyingContract: "0x0000000000000000000000000000000000000000",
   },
   message: {},
@@ -25,7 +25,7 @@ export const approveAgentSignType = {
   domain: {
     name: "AsterSignTransaction",
     version: "1",
-    chainId: 714,
+    chainId: 56,
     verifyingContract: "0x0000000000000000000000000000000000000000",
   },
   types: {
@@ -45,6 +45,7 @@ export const approveAgentSignType = {
       { name: "CanWithdraw", type: "bool" },
       { name: "Builder", type: "address" },
       { name: "MaxFeeRate", type: "string" },
+      { name: "BuilderName", type: "string" },
       { name: "User", type: "address" },
       { name: "Nonce", type: "uint256" },
     ],
@@ -57,7 +58,7 @@ export const approveBuilderSignType = {
   domain: {
     name: "AsterSignTransaction",
     version: "1",
-    chainId: 714,
+    chainId: 56,
     verifyingContract: "0x0000000000000000000000000000000000000000",
   },
   types: {
@@ -70,6 +71,7 @@ export const approveBuilderSignType = {
     ApproveBuilder: [
       { name: "Builder", type: "address" },
       { name: "MaxFeeRate", type: "string" },
+      { name: "BuilderName", type: "string" },
       { name: "User", type: "address" },
       { name: "Nonce", type: "uint256" },
     ],
@@ -81,7 +83,7 @@ export const approveBuilderSignTypeWithoutBuilder = {
   domain: {
     name: "AsterSignTransaction",
     version: "1",
-    chainId: 714,
+    chainId: 56,
     verifyingContract: "0x0000000000000000000000000000000000000000",
   },
   types: {
@@ -160,7 +162,7 @@ function inferEIP712Type(value) {
   } else if (typeof value === "string") {
     // Check if it's an address (starts with 0x and is 42 chars)
     if (value.startsWith("0x") && value.length === 42) {
-      return "address";
+      return "string";
     }
     return "string";
   }
@@ -209,17 +211,9 @@ export function useSignEIP712() {
     // Capitalize first letter of each key (matching Python behavior)
     const newDict = capitalizeKeys(message);
 
-    // Create a template with the current chainId
-    const templateWithChainId = {
-      ...eip712Template,
-      domain: {
-        ...eip712Template.domain,
-        chainId,
-      },
-    };
-
+    // Use template with chainId 56 as per demo-code.md
     const signData = buildDynamicEIP712WithInfer(
-      templateWithChainId,
+      eip712Template,
       primaryType,
       newDict
     );
@@ -257,7 +251,7 @@ export function useSignEIP712() {
       domain: {
         name: "AsterSignTransaction",
         version: "1",
-        chainId: chainId,
+        chainId,
         verifyingContract: "0x0000000000000000000000000000000000000000",
       },
       message: {

@@ -16,26 +16,42 @@ function App() {
   const [isSubmitting, setIsSubmitting] = React.useState(false)
   const [signedApiParams, setSignedApiParams] = React.useState(null)
 
+  // Nonce generation matching demo-code.md implementation
+  const lastMsRef = React.useRef(0)
+  const iRef = React.useRef(0)
+  const getNonce = () => {
+    const nowMs = Math.floor(Date.now() / 1000)
+    if (nowMs === lastMsRef.current) {
+      iRef.current += 1
+    } else {
+      lastMsRef.current = nowMs
+      iRef.current = 0
+    }
+    return nowMs * 1_000_000 + iRef.current
+  }
+
   const handleApproveAgent = async () => {
     if (!address) {
       alert('Please connect your wallet first')
       return
     }
 
-    // Generate nonce (timestamp in milliseconds * 1_000_000)
-    const nonce = Date.now()
+    // Generate nonce using the same logic as demo-code.md
+    const nonce = getNonce()
 
-    // Example parameters - you can modify these as needed
+    // Parameters matching demo-code.md
     const messageParams = {
-      agentName: 'demo-agent-001',
+      agentName: '2dkkd0001',
       agentAddress: address, // Using connected address as agent address
-      ipWhitelist: '127.0.0.1',
-      expired: Math.floor(Date.now() / 1000) + 300, // 5 minutes from now
+      ipWhitelist: '127.0.0.9',
+      expired: 1867945395040,
       canSpotTrade: true,
-      canPerpTrade: true,
-      canWithdraw: true,
-      // builder: '0xc2af13e1B1de3A015252A115309A0F9DEEDCFa0A', // Example builder address
-      // maxFeeRate: '0.00001',
+      canPerpTrade: false,
+      canWithdraw: false,
+      builder: '0xc2af13e1B1de3A015252A115309A0F9DEEDCFa0A',
+      maxFeeRate: '0.00001',
+      builderName: 'ivan',
+      asterChain: 'Testnet',
       user: address,
       nonce: nonce,
     }
@@ -50,6 +66,8 @@ function App() {
       const apiParams = {
         ...messageParams,
         signature: signature,
+        signatureChainId: chainId
+        
       }
       
       // Store the signed API params to display on screen
@@ -59,18 +77,18 @@ function App() {
       })
       
       // Commented out API call
-      // setIsSubmitting(true)
-      // try {
-      //   const response = await approveAgent(apiParams)
-      //   console.log('ApproveAgent API response:', response.data)
-      //   alert(`ApproveAgent submitted successfully!\nSignature: ${signature}\nResponse: ${JSON.stringify(response.data)}`)
-      // } catch (apiError) {
-      //   console.error('Error calling approveAgent API:', apiError)
-      //   alert(`Error submitting to API: ${apiError.response?.data?.message || apiError.message || 'Unknown error'}`)
-      //   setIsSubmitting(false) // Reset on error
-      // } finally {
-      //   setIsSubmitting(false)
-      // }
+      setIsSubmitting(true)
+      try {
+        const response = await approveAgent(apiParams)
+        console.log('ApproveAgent API response:', response.data)
+        alert(`ApproveAgent submitted successfully!\nSignature: ${signature}\nResponse: ${JSON.stringify(response.data)}`)
+      } catch (apiError) {
+        console.error('Error calling approveAgent API:', apiError)
+        alert(`Error submitting to API: ${apiError.response?.data?.message || apiError.message || 'Unknown error'}`)
+        setIsSubmitting(false) // Reset on error
+      } finally {
+        setIsSubmitting(false)
+      }
     } catch (error) {
       console.error('Error signing ApproveAgent:', error)
       // alert(`Error signing: ${error.message}`)
@@ -84,14 +102,15 @@ function App() {
       return
     }
 
-    // Generate nonce (timestamp in milliseconds * 1_000_000)
-    const nonce = Date.now() * 1_000_000
+    // Generate nonce using the same logic as demo-code.md
+    const nonce = getNonce()
 
-    // Example parameters - you can modify these as needed
+    // Parameters matching demo-code.md
     const messageParams = {
-      builder: '0xc2af13e1B1de3A015252A115309A0F9DEEDCFa0A', // Example builder address
-      builderName: "hello-builder",
+      builder: '0xc2af13e1B1de3A015252A115309A0F9DEEDCFa0A',
       maxFeeRate: '0.00001',
+      builderName: 'ivan3',
+      asterChain: 'Testnet',
       user: address,
       nonce: nonce,
     }
@@ -106,6 +125,7 @@ function App() {
       const apiParams = {
         ...messageParams,
         signature: signature,
+        signatureChainId: chainId
       }
       
       // Store the signed API params to display on screen
@@ -115,18 +135,18 @@ function App() {
       })
       
       // Commented out API call
-      // setIsSubmitting(true)
-      // try {
-      //   const response = await approveBuilder(apiParams)
-      //   console.log('ApproveBuilder API response:', response.data)
-      //   alert(`ApproveBuilder submitted successfully!\nSignature: ${signature}\nResponse: ${JSON.stringify(response.data)}`)
-      // } catch (apiError) {
-      //   console.error('Error calling approveBuilder API:', apiError)
-      //   alert(`Error submitting to API: ${apiError.response?.data?.message || apiError.message || 'Unknown error'}`)
-      //   setIsSubmitting(false) // Reset on error
-      // } finally {
-      //   setIsSubmitting(false)
-      // }
+      setIsSubmitting(true)
+      try {
+        const response = await approveBuilder(apiParams)
+        console.log('ApproveBuilder API response:', response.data)
+        alert(`ApproveBuilder submitted successfully!\nSignature: ${signature}\nResponse: ${JSON.stringify(response.data)}`)
+      } catch (apiError) {
+        console.error('Error calling approveBuilder API:', apiError)
+        alert(`Error submitting to API: ${apiError.response?.data?.message || apiError.message || 'Unknown error'}`)
+        setIsSubmitting(false) // Reset on error
+      } finally {
+        setIsSubmitting(false)
+      }
     } catch (error) {
       console.error('Error signing ApproveBuilder:', error)
       // alert(`Error signing: ${error.message}`)

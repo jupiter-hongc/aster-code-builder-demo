@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Create axios instance with default config
-const createApiInstance = (baseURL) => {
+const createApiInstance = (baseURL = "http://10.100.7.198:9081") => {
   const api = axios.create({
     baseURL,
     headers: {
