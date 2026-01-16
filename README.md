@@ -44,6 +44,32 @@ bun run build
 bun run preview
 ```
 
+## GitHub Pages Deployment
+
+This project is configured for automatic deployment to GitHub Pages using GitHub Actions.
+
+### Setup Instructions
+
+1. **Enable GitHub Pages in your repository:**
+
+   - Go to your repository settings on GitHub
+   - Navigate to "Pages" in the left sidebar
+   - Under "Source", select "GitHub Actions"
+
+2. **Push to trigger deployment:**
+
+   - The workflow automatically deploys when you push to `main` or `master` branch
+   - You can also manually trigger it from the "Actions" tab
+
+3. **Your site will be available at:**
+   - `https://<username>.github.io/<repository-name>/`
+
+The GitHub Actions workflow (`.github/workflows/deploy.yml`) will:
+
+- Build the project using Bun
+- Deploy the `dist` folder to GitHub Pages
+- Automatically set the correct base path for your repository
+
 ## Project Structure
 
 ```
