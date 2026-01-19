@@ -1,7 +1,7 @@
 import React from 'react'
 import { useConnection, useConnect, useDisconnect, useBalance, useChainId, useConnectors , useSignTypedData} from 'wagmi'
-import { useSignEIP712, formatApproveAgentMessage, formatApproveBuilderMessage } from './sign.js'
-import { approveAgent, approveBuilder, updateBuilder } from './api.js'
+import { useSignEIP712, formatApproveAgentMessage, formatApproveBuilderMessage, formatUpdateAgentMessage, formatDelAgentMessage, formatDelBuilderMessage, formatPlaceOrderMessage } from './sign.js'
+import { approveAgent, approveBuilder, updateBuilder, updateAgent, delAgent, delBuilder, placeOrder } from './api.js'
 
 function App() {
   const { address, isConnected } = useConnection()
@@ -80,18 +80,18 @@ function App() {
       })
       
       // Commented out API call
-      setIsSubmitting(true)
-      try {
-        const response = await approveAgent(apiParams)
-        console.log('ApproveAgent API response:', response.data)
-        alert(`ApproveAgent submitted successfully!\nSignature: ${signature}\nResponse: ${JSON.stringify(response.data)}`)
-      } catch (apiError) {
-        console.error('Error calling approveAgent API:', apiError)
-        alert(`Error submitting to API: ${apiError.response?.data?.message || apiError.message || 'Unknown error'}`)
-        setIsSubmitting(false) // Reset on error
-      } finally {
-        setIsSubmitting(false)
-      }
+      // setIsSubmitting(true)
+      // try {
+      //   const response = await approveAgent(apiParams)
+      //   console.log('ApproveAgent API response:', response.data)
+      //   alert(`ApproveAgent submitted successfully!\nSignature: ${signature}\nResponse: ${JSON.stringify(response.data)}`)
+      // } catch (apiError) {
+      //   console.error('Error calling approveAgent API:', apiError)
+      //   alert(`Error submitting to API: ${apiError.response?.data?.message || apiError.message || 'Unknown error'}`)
+      //   setIsSubmitting(false) // Reset on error
+      // } finally {
+      //   setIsSubmitting(false)
+      // }
     } catch (error) {
       console.error('Error signing ApproveAgent:', error)
       // alert(`Error signing: ${error.message}`)
@@ -138,18 +138,18 @@ function App() {
       })
       
       // Commented out API call
-      setIsSubmitting(true)
-      try {
-        const response = await approveBuilder(apiParams)
-        console.log('ApproveBuilder API response:', response.data)
-        alert(`ApproveBuilder submitted successfully!\nSignature: ${signature}\nResponse: ${JSON.stringify(response.data)}`)
-      } catch (apiError) {
-        console.error('Error calling approveBuilder API:', apiError)
-        alert(`Error submitting to API: ${apiError.response?.data?.message || apiError.message || 'Unknown error'}`)
-        setIsSubmitting(false) // Reset on error
-      } finally {
-        setIsSubmitting(false)
-      }
+      // setIsSubmitting(true)
+      // try {
+      //   const response = await approveBuilder(apiParams)
+      //   console.log('ApproveBuilder API response:', response.data)
+      //   alert(`ApproveBuilder submitted successfully!\nSignature: ${signature}\nResponse: ${JSON.stringify(response.data)}`)
+      // } catch (apiError) {
+      //   console.error('Error calling approveBuilder API:', apiError)
+      //   alert(`Error submitting to API: ${apiError.response?.data?.message || apiError.message || 'Unknown error'}`)
+      //   setIsSubmitting(false) // Reset on error
+      // } finally {
+      //   setIsSubmitting(false)
+      // }
     } catch (error) {
       console.error('Error signing ApproveBuilder:', error)
       // alert(`Error signing: ${error.message}`)
@@ -195,21 +195,235 @@ function App() {
         params: apiParams,
       })
       
-      setIsSubmitting(true)
-      try {
-        const response = await updateBuilder(apiParams)
-        console.log('UpdateBuilder API response:', response.data)
-        alert(`UpdateBuilder submitted successfully!\nSignature: ${signature}\nResponse: ${JSON.stringify(response.data)}`)
-      } catch (apiError) {
-        console.error('Error calling updateBuilder API:', apiError)
-        alert(`Error submitting to API: ${apiError.response?.data?.message || apiError.message || 'Unknown error'}`)
-        setIsSubmitting(false) // Reset on error
-      } finally {
-        setIsSubmitting(false)
-      }
+      // Commented out API call
+      // setIsSubmitting(true)
+      // try {
+      //   const response = await updateBuilder(apiParams)
+      //   console.log('UpdateBuilder API response:', response.data)
+      //   alert(`UpdateBuilder submitted successfully!\nSignature: ${signature}\nResponse: ${JSON.stringify(response.data)}`)
+      // } catch (apiError) {
+      //   console.error('Error calling updateBuilder API:', apiError)
+      //   alert(`Error submitting to API: ${apiError.response?.data?.message || apiError.message || 'Unknown error'}`)
+      //   setIsSubmitting(false) // Reset on error
+      // } finally {
+      //   setIsSubmitting(false)
+      // }
     } catch (error) {
       console.error('Error signing UpdateBuilder:', error)
       setIsSubmitting(false) // Reset submission state on signing error
+    }
+  }
+
+  const handleUpdateAgent = async () => {
+    if (!address) {
+      alert('Please connect your wallet first')
+      return
+    }
+
+    const nonce = getNonce()
+
+    const messageParams = {
+      agentAddress: address,
+      ipWhitelist: '',
+      canSpotTrade: false,
+      canPerpTrade: true,
+      canWithdraw: false,
+      asterChain: 'Testnet',
+      user: address,
+      nonce: nonce,
+    }
+
+    const formattedMessage = formatUpdateAgentMessage(messageParams)
+
+    try {
+      const signature = await signV3EIP712(formattedMessage, 'UpdateAgent')
+      console.log('UpdateAgent signature:', signature)
+      
+      const apiParams = {
+        ...messageParams,
+        signature: signature,
+        signatureChainId: chainId
+      }
+      
+      setSignedApiParams({
+        type: 'UpdateAgent',
+        params: apiParams,
+      })
+      
+      // Commented out API call
+      // setIsSubmitting(true)
+      // try {
+      //   const response = await updateAgent(apiParams)
+      //   console.log('UpdateAgent API response:', response.data)
+      //   alert(`UpdateAgent submitted successfully!\nSignature: ${signature}\nResponse: ${JSON.stringify(response.data)}`)
+      // } catch (apiError) {
+      //   console.error('Error calling updateAgent API:', apiError)
+      //   alert(`Error submitting to API: ${apiError.response?.data?.message || apiError.message || 'Unknown error'}`)
+      //   setIsSubmitting(false)
+      // } finally {
+      //   setIsSubmitting(false)
+      // }
+    } catch (error) {
+      console.error('Error signing UpdateAgent:', error)
+      setIsSubmitting(false)
+    }
+  }
+
+  const handleDelAgent = async () => {
+    if (!address) {
+      alert('Please connect your wallet first')
+      return
+    }
+
+    const nonce = getNonce()
+
+    const messageParams = {
+      agentAddress: address,
+      asterChain: 'Testnet',
+      user: address,
+      nonce: nonce,
+    }
+
+    const formattedMessage = formatDelAgentMessage(messageParams)
+
+    try {
+      const signature = await signV3EIP712(formattedMessage, 'DelAgent')
+      console.log('DelAgent signature:', signature)
+      
+      const apiParams = {
+        ...messageParams,
+        signature: signature,
+        signatureChainId: chainId
+      }
+      
+      setSignedApiParams({
+        type: 'DelAgent',
+        params: apiParams,
+      })
+      
+      // Commented out API call
+      // setIsSubmitting(true)
+      // try {
+      //   const response = await delAgent(apiParams)
+      //   console.log('DelAgent API response:', response.data)
+      //   alert(`DelAgent submitted successfully!\nSignature: ${signature}\nResponse: ${JSON.stringify(response.data)}`)
+      // } catch (apiError) {
+      //   console.error('Error calling delAgent API:', apiError)
+      //   alert(`Error submitting to API: ${apiError.response?.data?.message || apiError.message || 'Unknown error'}`)
+      //   setIsSubmitting(false)
+      // } finally {
+      //   setIsSubmitting(false)
+      // }
+    } catch (error) {
+      console.error('Error signing DelAgent:', error)
+      setIsSubmitting(false)
+    }
+  }
+
+  const handleDelBuilder = async () => {
+    if (!address) {
+      alert('Please connect your wallet first')
+      return
+    }
+
+    const nonce = getNonce()
+
+    const messageParams = {
+      builder: '0xc2af13e1B1de3A015252A115309A0F9DEEDCFa0A',
+      asterChain: 'Testnet',
+      user: address,
+      nonce: nonce,
+    }
+
+    const formattedMessage = formatDelBuilderMessage(messageParams)
+
+    try {
+      const signature = await signV3EIP712(formattedMessage, 'DelBuilder')
+      console.log('DelBuilder signature:', signature)
+      
+      const apiParams = {
+        ...messageParams,
+        signature: signature,
+        signatureChainId: chainId
+      }
+      
+      setSignedApiParams({
+        type: 'DelBuilder',
+        params: apiParams,
+      })
+      
+      // Commented out API call
+      // setIsSubmitting(true)
+      // try {
+      //   const response = await delBuilder(apiParams)
+      //   console.log('DelBuilder API response:', response.data)
+      //   alert(`DelBuilder submitted successfully!\nSignature: ${signature}\nResponse: ${JSON.stringify(response.data)}`)
+      // } catch (apiError) {
+      //   console.error('Error calling delBuilder API:', apiError)
+      //   alert(`Error submitting to API: ${apiError.response?.data?.message || apiError.message || 'Unknown error'}`)
+      //   setIsSubmitting(false)
+      // } finally {
+      //   setIsSubmitting(false)
+      // }
+    } catch (error) {
+      console.error('Error signing DelBuilder:', error)
+      setIsSubmitting(false)
+    }
+  }
+
+  const handlePlaceOrder = async () => {
+    if (!address) {
+      alert('Please connect your wallet first')
+      return
+    }
+
+    const nonce = getNonce()
+
+    const messageParams = {
+      symbol: 'BTCUSDT',
+      type: 'MARKET',
+      builder: '0xc2af13e1B1de3A015252A115309A0F9DEEDCFa0A',
+      feeRate: '0.00001',
+      side: 'BUY',
+      quantity: '0.03',
+      asterChain: 'Testnet',
+      user: address,
+      nonce: nonce,
+    }
+
+    const formattedMessage = formatPlaceOrderMessage(messageParams)
+
+    try {
+      const signature = await signV3EIP712(formattedMessage, 'PlaceOrder')
+      console.log('PlaceOrder signature:', signature)
+      
+      const apiParams = {
+        ...messageParams,
+        signature: signature,
+        signatureChainId: chainId
+      }
+      
+      setSignedApiParams({
+        type: 'PlaceOrder',
+        params: apiParams,
+      })
+      
+      // Commented out API call
+      // setIsSubmitting(true)
+      // try {
+      //   const response = await placeOrder(apiParams)
+      //   console.log('PlaceOrder API response:', response.data)
+      //   alert(`PlaceOrder submitted successfully!\nSignature: ${signature}\nResponse: ${JSON.stringify(response.data)}`)
+      // } catch (apiError) {
+      //   console.error('Error calling placeOrder API:', apiError)
+      //   alert(`Error submitting to API: ${apiError.response?.data?.message || apiError.message || 'Unknown error'}`)
+      //   setIsSubmitting(false)
+      // } finally {
+      //   setIsSubmitting(false)
+      // }
+    } catch (error) {
+      console.error('Error signing PlaceOrder:', error)
+      setIsSubmitting(false)
     }
   }
 
@@ -250,6 +464,34 @@ function App() {
               disabled={isSigning || isSubmitting}
             >
               {isSigning ? 'Signing...' : isSubmitting ? 'Submitting...' : 'Update Builder'}
+            </button>
+            <button 
+              onClick={handleUpdateAgent} 
+              className="button"
+              disabled={isSigning || isSubmitting}
+            >
+              {isSigning ? 'Signing...' : isSubmitting ? 'Submitting...' : 'Update Agent'}
+            </button>
+            <button 
+              onClick={handleDelAgent} 
+              className="button"
+              disabled={isSigning || isSubmitting}
+            >
+              {isSigning ? 'Signing...' : isSubmitting ? 'Submitting...' : 'Delete Agent'}
+            </button>
+            <button 
+              onClick={handleDelBuilder} 
+              className="button"
+              disabled={isSigning || isSubmitting}
+            >
+              {isSigning ? 'Signing...' : isSubmitting ? 'Submitting...' : 'Delete Builder'}
+            </button>
+            <button 
+              onClick={handlePlaceOrder} 
+              className="button"
+              disabled={isSigning || isSubmitting}
+            >
+              {isSigning ? 'Signing...' : isSubmitting ? 'Submitting...' : 'Place Order'}
             </button>
           </div>
 

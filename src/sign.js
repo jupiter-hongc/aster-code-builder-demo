@@ -150,6 +150,63 @@ export function formatApproveBuilderMessage(params) {
 }
 
 /**
+ * Format message for UpdateAgent signing
+ * @param {Object} params - Agent update parameters
+ * @param {string} params.agentAddress - Agent address
+ * @param {string} params.ipWhitelist - IP whitelist
+ * @param {boolean} params.canSpotTrade - Can spot trade
+ * @param {boolean} params.canPerpTrade - Can perp trade
+ * @param {boolean} params.canWithdraw - Can withdraw
+ * @param {string} params.user - User address
+ * @param {number} params.nonce - Nonce
+ * @returns {Object} Formatted message with capitalized keys
+ */
+export function formatUpdateAgentMessage(params) {
+  return capitalizeKeys(params);
+}
+
+/**
+ * Format message for DelAgent signing
+ * @param {Object} params - Agent deletion parameters
+ * @param {string} params.agentAddress - Agent address
+ * @param {string} params.user - User address
+ * @param {number} params.nonce - Nonce
+ * @returns {Object} Formatted message with capitalized keys
+ */
+export function formatDelAgentMessage(params) {
+  return capitalizeKeys(params);
+}
+
+/**
+ * Format message for DelBuilder signing
+ * @param {Object} params - Builder deletion parameters
+ * @param {string} params.builder - Builder address
+ * @param {string} params.user - User address
+ * @param {number} params.nonce - Nonce
+ * @returns {Object} Formatted message with capitalized keys
+ */
+export function formatDelBuilderMessage(params) {
+  return capitalizeKeys(params);
+}
+
+/**
+ * Format message for PlaceOrder signing
+ * @param {Object} params - Order parameters
+ * @param {string} params.symbol - Trading symbol
+ * @param {string} params.type - Order type
+ * @param {string} params.builder - Builder address
+ * @param {number} params.feeRate - Fee rate
+ * @param {string} params.side - Order side
+ * @param {string} params.quantity - Order quantity
+ * @param {string} params.signer - Signer address (optional)
+ * @param {number} params.nonce - Nonce
+ * @returns {Object} Formatted message with capitalized keys
+ */
+export function formatPlaceOrderMessage(params) {
+  return capitalizeKeys(params);
+}
+
+/**
  * Infer EIP-712 type from JavaScript value
  * @param {any} value - The value to infer type from
  * @returns {string} The EIP-712 type string
