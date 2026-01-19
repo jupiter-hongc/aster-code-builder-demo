@@ -6,8 +6,17 @@ A demo project showcasing EIP-712 message signing for Aster protocol using Wagmi
 
 - 🔌 Wallet connection via injected connector (MetaMask, etc.)
 - 📊 Display wallet address, chain ID, and balance
-- ✍️ EIP-712 message signing for ApproveAgent and ApproveBuilder
-- 🔗 API integration for agent and builder management
+- ✍️ EIP-712 message signing for multiple operations:
+  - ApproveAgent - Approve a new agent
+  - ApproveBuilder - Approve a new builder
+  - UpdateAgent - Update agent settings
+  - UpdateBuilder - Update builder settings
+  - DelAgent - Delete an agent
+  - DelBuilder - Delete a builder
+  - PlaceOrder - Place a trading order
+- 🔗 API integration for agent, builder, and order management
+- 🔢 Automatic nonce generation for message signing
+- 📋 Display signed API parameters on screen
 - ⚡ Fast development with Vite and Bun
 - 🎨 Modern UI with responsive design
 - 🌐 Support for Ethereum Mainnet and BSC chains
@@ -74,11 +83,11 @@ The GitHub Actions workflow (`.github/workflows/deploy.yml`) will:
 
 ```
 ├── src/
-│   ├── App.jsx          # Main app component with wagmi hooks and signing logic
+│   ├── App.jsx          # Main app component with wagmi hooks, signing logic, and UI
 │   ├── main.jsx         # React entry point with providers
 │   ├── wagmi.js         # Wagmi configuration (chains and connectors)
-│   ├── sign.js          # EIP-712 signing utilities and hooks
-│   ├── api.js           # API client for agent/builder endpoints
+│   ├── sign.js          # EIP-712 signing utilities, hooks, and message formatters
+│   ├── api.js           # API client for agent/builder/order endpoints
 │   └── index.css        # Styles
 ├── index.html           # HTML entry point
 ├── vite.config.js       # Vite configuration
@@ -97,17 +106,29 @@ The GitHub Actions workflow (`.github/workflows/deploy.yml`) will:
 
 ## EIP-712 Signing
 
-The project includes custom hooks for signing EIP-712 messages:
+The project includes custom hooks for signing EIP-712 messages with the following operations:
 
-- **ApproveAgent**: Sign agent approval messages with parameters like agent name, address, IP whitelist, permissions, etc.
-- **ApproveBuilder**: Sign builder approval messages with builder address and max fee rate
+- **ApproveAgent**: Sign agent approval messages with parameters like agent name, address, IP whitelist, permissions, builder, max fee rate, etc.
+- **ApproveBuilder**: Sign builder approval messages with builder address, max fee rate, and builder name
+- **UpdateAgent**: Sign agent update messages to modify agent settings (IP whitelist, trading permissions, etc.)
+- **UpdateBuilder**: Sign builder update messages to modify builder max fee rate
+- **DelAgent**: Sign agent deletion messages to remove an agent
+- **DelBuilder**: Sign builder deletion messages to remove a builder
+- **PlaceOrder**: Sign order placement messages for trading operations with symbol, type, side, quantity, etc.
 
-Both signing functions use the Aster protocol's EIP-712 domain:
+All signing functions use the Aster protocol's EIP-712 domain:
 
 - Domain name: `AsterSignTransaction`
 - Version: `1`
 - Chain ID: Dynamic (uses current connected chain)
 - Verifying contract: `0x0000000000000000000000000000000000000000`
+
+### Nonce Generation
+
+The project implements automatic nonce generation matching the demo-code.md specification:
+- Nonces are generated using timestamp-based logic with microsecond precision
+- Format: `timestamp * 1_000_000 + increment`
+- Ensures unique nonces even for rapid successive operations
 
 ## API Integration
 
@@ -129,9 +150,20 @@ The project includes API client functions for interacting with the Aster protoco
 
 ### Order Endpoints
 
-- `placeOrder` - Place a trading order
+- `placeOrder` - Place a trading order with symbol, type, side, quantity, builder, and fee rate
 
-Note: API calls are currently commented out in the UI. Uncomment the relevant sections in `App.jsx` to enable API submission.
+## UI Features
+
+The application provides a user-friendly interface that:
+
+- Displays connected wallet information (address, chain ID, balance)
+- Shows all available wallet connectors for connection
+- Provides buttons for each signing operation
+- Displays signed API parameters in a formatted JSON view after signing
+- Shows error messages if signing fails
+- Allows clearing the signed parameters display
+
+Note: API calls are currently commented out in the UI. The signed parameters are displayed on screen for inspection. Uncomment the relevant sections in `App.jsx` to enable API submission.
 
 ## Learn More
 
