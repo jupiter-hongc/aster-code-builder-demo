@@ -171,7 +171,7 @@ primary_type = method_config.get('primary_type')
 sign_private_key = main_private_key
 main = method_config.get('main') is not None
 
-    param['asterChain'] = 'Testnet'
+    param['asterChain'] = 'Mainnet'
     param['user'] = user
     if not main:
         sign_private_key = priKey

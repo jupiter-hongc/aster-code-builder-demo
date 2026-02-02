@@ -54,7 +54,7 @@ function App() {
       builder: '0xc2af13e1B1de3A015252A115309A0F9DEEDCFa0A',
       maxFeeRate: '0.00001',
       builderName: 'hong',
-      asterChain: 'Testnet',
+      asterChain: 'Mainnet',
       user: address,
       nonce: nonce,
     }
@@ -113,7 +113,7 @@ function App() {
       builder: '0xc2af13e1B1de3A015252A115309A0F9DEEDCFa0A',
       maxFeeRate: '0.00001',
       builderName: 'ivan3',
-      asterChain: 'Testnet',
+      asterChain: 'Mainnet',
       user: address,
       nonce: nonce,
     }
@@ -170,7 +170,7 @@ function App() {
     const messageParams = {
       builder: '0xc2af13e1B1de3A015252A115309A0F9DEEDCFa0A',
       maxFeeRate: '0.00002',
-      asterChain: 'Testnet',
+      asterChain: 'Mainnet',
       user: address,
       nonce: nonce,
     }
@@ -228,7 +228,7 @@ function App() {
       canSpotTrade: false,
       canPerpTrade: true,
       canWithdraw: false,
-      asterChain: 'Testnet',
+      asterChain: 'Mainnet',
       user: address,
       nonce: nonce,
     }
@@ -279,7 +279,7 @@ function App() {
 
     const messageParams = {
       agentAddress: address,
-      asterChain: 'Testnet',
+      asterChain: 'Mainnet',
       user: address,
       nonce: nonce,
     }
@@ -330,7 +330,7 @@ function App() {
 
     const messageParams = {
       builder: '0xc2af13e1B1de3A015252A115309A0F9DEEDCFa0A',
-      asterChain: 'Testnet',
+      asterChain: 'Mainnet',
       user: address,
       nonce: nonce,
     }
@@ -386,7 +386,7 @@ function App() {
       feeRate: '0.00001',
       side: 'BUY',
       quantity: '0.03',
-      asterChain: 'Testnet',
+      asterChain: 'Mainnet',
       user: address,
       nonce: nonce,
     }
