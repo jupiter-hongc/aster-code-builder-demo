@@ -15,6 +15,8 @@ function App() {
   const { signV3EIP712, isPending: isSigning, isError: isSignError, error: signError } = useSignEIP712()
   const [isSubmitting, setIsSubmitting] = React.useState(false)
   const [signedApiParams, setSignedApiParams] = React.useState(null)
+  const builderName = "REPLACE_IT_WITH_YOUR_BUILDER_NAME"
+  
 
   // Nonce generation matching demo-code.md implementation
   const lastMsRef = React.useRef(0)
@@ -53,7 +55,7 @@ function App() {
       canWithdraw: false,
       builder: '0xc2af13e1B1de3A015252A115309A0F9DEEDCFa0A',
       maxFeeRate: '0.00001',
-      builderName: 'hong',
+      builderName,
       asterChain: 'Mainnet',
       user: address,
       nonce: nonce,
@@ -112,7 +114,7 @@ function App() {
     const messageParams = {
       builder: '0xc2af13e1B1de3A015252A115309A0F9DEEDCFa0A',
       maxFeeRate: '0.00001',
-      builderName: 'ivan3',
+      builderName,
       asterChain: 'Mainnet',
       user: address,
       nonce: nonce,
